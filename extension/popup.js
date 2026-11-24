@@ -161,10 +161,10 @@ button.addEventListener("click", async () => {
 
 
         if (!response.ok) {
-            throw new Error(
-                "n8n returned HTTP " +
-                response.status
-            );
+            const errData = await response.json().catch(() => ({}));
+    throw new Error(
+        errData.error || ("Server returned HTTP " + response.status)
+    );
         }
 
 

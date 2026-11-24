@@ -21,36 +21,36 @@ Sender: ${sender}
 Subject: ${subject}
 Body: ${body}`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: 'application/json' }
-        })
+    const models = ['gemini-3.8-flash', 'gemini-3.8-flash-lite'];
+    let lastError = 'Unexpected response from Gemini API';
+
+    for (const model of models) {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: 'application/json' }
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        const rawText = data.candidates[0].content.parts[0].text
+          .replace(/```json|```/g, '')
+          .trim();
+        return res.status(200).json(JSON.parse(rawText));
       }
-    );
 
-    const data = await response.json();
-
-    if (!response.ok || !data.candidates?.[0]?.content?.parts?.[0]?.text) {
-      console.error('Gemini API Error:', JSON.stringify(data));
-      return res.status(500).json({
-        error: data.error?.message || 'Unexpected response from Gemini API'
-      });
+      lastError = data.error?.message || lastError;
     }
 
-    const rawText = data.candidates[0].content.parts[0].text
-      .replace(/```json|```/g, '')
-      .trim();
-
-    const result = JSON.parse(rawText);
-    return res.status(200).json(result);
-
+    return res.status(503).json({ error: lastError });
   } catch (err) {
-    console.error('Server crash:', err);
     return res.status(500).json({ error: err.message });
   }
 }
