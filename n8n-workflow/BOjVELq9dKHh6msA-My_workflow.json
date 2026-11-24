@@ -145,7 +145,7 @@
     "binaryMode": "separate"
   },
   "staticData": null,
-  "pinData": {},
+  
   "triggerCount": 1,
   "meta": {
     "templateCredsSetupCompleted": true

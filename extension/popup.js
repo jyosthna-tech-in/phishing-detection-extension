@@ -4,7 +4,7 @@ const button = document.getElementById("checkButton");
 const status = document.getElementById("status");
 
 const N8N_WEBHOOK_URL =
-    "https://your-n8n-instance.app.n8n.cloud/";
+    "https://phishing-detection-extension-three.vercel.app/api/analyze";
 
 
 button.addEventListener("click", async () => {

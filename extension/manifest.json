@@ -9,7 +9,7 @@
   ],
   "host_permissions": [
     "https://mail.google.com/*",
-    "YOUR n8n Instance"
+    "https://phishing-detection-extension-three.vercel.app/*"
   ],
   "action": {
     "default_popup": "popup.html",
