@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Gmail Phishing Detector",
+  "version": "1.0.0",
+  "description": "Analyze the currently opened Gmail email for phishing.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "YOUR n8n Instance"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Check Gmail for phishing"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mail.google.com/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
+}
