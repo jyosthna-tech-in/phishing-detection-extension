@@ -3,35 +3,462 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Phishing Detector</title>
+  <title>Phishing Detector - Live Demo</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 0 20px; color: #172033; }
-    textarea, input { width: 100%; padding: 10px; margin: 8px 0 16px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
-    button { background: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    pre { background: #f1f5f9; padding: 14px; border-radius: 8px; white-space: pre-wrap; }
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --safe-bg: #ecfdf5;
+      --safe-border: #a7f3d0;
+      --safe-text: #047857;
+      --warn-bg: #fffbeb;
+      --warn-border: #fde68a;
+      --warn-text: #b45309;
+      --danger-bg: #fff1f2;
+      --danger-border: #fecdd3;
+      --danger-text: #be123c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrapper {
+      max-width: 680px;
+      margin: 48px auto;
+      padding: 0 20px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      margin: 2px 0 0;
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      padding: 5px 10px;
+      border-radius: 999px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .toolbar-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .sample-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 130px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-clear {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-clear:hover {
+      background: #f8fafc;
+      color: var(--text);
+    }
+
+    #result {
+      margin-top: 22px;
+      display: none;
+    }
+
+    .result-box {
+      border-radius: 12px;
+      padding: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .result-box.safe {
+      background: var(--safe-bg);
+      border-color: var(--safe-border);
+      color: var(--safe-text);
+    }
+
+    .result-box.suspicious {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+      color: var(--warn-text);
+    }
+
+    .result-box.phishing,
+    .result-box.error {
+      background: var(--danger-bg);
+      border-color: var(--danger-border);
+      color: var(--danger-text);
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .verdict-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .score-pill {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid currentColor;
+    }
+
+    .reason-text {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #1e293b;
+    }
+
+    footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
-  <h2>AI Phishing Email Detector — Live Demo</h2>
-  <input id="sender" placeholder="Sender (e.g. security@paypa1-alert.com)" />
-  <input id="subject" placeholder="Subject (e.g. Urgent: Verify your account)" />
-  <textarea id="body" rows="5" placeholder="Paste suspicious email text here..."></textarea>
-  <button onclick="testScan()">Analyze Email</button>
-  <pre id="out">Results will appear here...</pre>
+  <div class="wrapper">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">&#128737;</div>
+        <div>
+          <h1>Phishing Detector</h1>
+          <p class="subtitle">Interactive web demo powered by the Gemini API backend as the Chrome extension</p>
+        </div>
+      </div>
+      <span class="badge">Live Sandbox</span>
+    </header>
+
+    <main class="card">
+      <div class="toolbar">
+        <span class="toolbar-label">Quick Test Presets</span>
+        <div class="sample-actions">
+          <button type="button" class="btn-secondary" onclick="loadSample('phishing')">
+            Load Sample Phishing Email
+          </button>
+          <button type="button" class="btn-secondary" onclick="loadSample('safe')">
+            Load Safe Email
+          </button>
+        </div>
+      </div>
+
+      <form id="scanForm" onsubmit="analyzeEmail(event)">
+        <div class="field">
+          <label for="sender">Sender Email</label>
+          <input
+            id="sender"
+            type="text"
+            placeholder="e.g. security-alert@paypa1-verification.com"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="subject">Subject Line</label>
+          <input
+            id="subject"
+            type="text"
+            placeholder="e.g. Urgent: Unauthorized login detected on your account"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="body">Email Body</label>
+          <textarea
+            id="body"
+            placeholder="Paste email content here or click 'Load Sample Phishing Email' above..."
+            required
+          ></textarea>
+        </div>
+
+        <div class="actions">
+          <button type="submit" id="submitBtn" class="btn-primary">Check for Phishing</button>
+          <button type="button" class="btn-clear" onclick="clearForm()">Clear</button>
+        </div>
+      </form>
+
+      <div id="result" aria-live="polite"></div>
+    </main>
+
+    <footer>
+      Emails submitted here are analyzed on demand via <code>/api/analyze</code> and are not stored.
+    </footer>
+  </div>
+
   <script>
-    async function testScan() {
-      const out = document.getElementById('out');
-      out.textContent = 'Analyzing...';
-      const res = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sender: document.getElementById('sender').value,
-          subject: document.getElementById('subject').value,
-          body: document.getElementById('body').value
-        })
-      });
-      out.textContent = 'HTTP ' + res.status + '\n' + await res.text();
+    const SAMPLES = {
+      phishing: {
+        sender: "account-security@paypa1-support-verify.com",
+        subject: "URGENT: Your account has been temporarily restricted",
+        body: "Dear Customer,\n\nWe detected an unusual sign-in attempt on your account from an unrecognized device. For your protection, outgoing transfers have been suspended.\n\nYou must verify your identity within 12 hours or your account will be permanently locked:\nhttp://paypa1-support-verify.com/session/restore-login\n\nFailure to confirm your billing details immediately will result in account closure.\n\nSecurity Operations Team"
+      },
+      safe: {
+        sender: "notifications@github.com",
+        subject: "[GitHub] Your pull request #14 was merged",
+        body: "Hi there,\n\nYour pull request #14 (Fix API fallback handling) has been merged into main.\n\nYou can view the full commit history and deployment checks on your repository page.\n\nThanks,\nThe GitHub Team"
+      }
+    };
+
+    function loadSample(type) {
+      const sample = SAMPLES[type];
+      if (!sample) return;
+      document.getElementById("sender").value = sample.sender;
+      document.getElementById("subject").value = sample.subject;
+      document.getElementById("body").value = sample.body;
+      document.getElementById("result").style.display = "none";
+    }
+
+    function clearForm() {
+      document.getElementById("scanForm").reset();
+      document.getElementById("result").style.display = "none";
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    async function analyzeEmail(event) {
+      event.preventDefault();
+
+      const btn = document.getElementById("submitBtn");
+      const resultDiv = document.getElementById("result");
+
+      const sender = document.getElementById("sender").value.trim();
+      const subject = document.getElementById("subject").value.trim();
+      const body = document.getElementById("body").value.trim();
+
+      btn.disabled = true;
+      btn.textContent = "Analyzing email...";
+      resultDiv.style.display = "none";
+
+      try {
+        const response = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sender, subject, body })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Server returned HTTP " + response.status);
+        }
+
+        const verdict = data.verdict || "Unknown";
+        const score = Number.isFinite(Number(data.score)) ? Number(data.score) : 0;
+        const reason = data.reason || "No explanation provided.";
+
+        let statusClass = "safe";
+        if (verdict.toLowerCase() === "phishing" || score >= 70) {
+          statusClass = "phishing";
+        } else if (verdict.toLowerCase() === "suspicious" || score > 40) {
+          statusClass = "suspicious";
+        }
+
+        resultDiv.innerHTML = `
+          <div class="result-box ${statusClass}">
+            <div class="result-header">
+              <span class="verdict-title">Verdict: ${escapeHtml(verdict)}</span>
+              <span class="score-pill">Risk Score: ${score}/100</span>
+            </div>
+            <p class="reason-text">${escapeHtml(reason)}</p>
+          </div>
+        `;
+        resultDiv.style.display = "block";
+      } catch (err) {
+        resultDiv.innerHTML = `
+          <div class="result-box error">
+            <div class="result-header">
+              <span class="verdict-title">Analysis Failed</span>
+            </div>
+            <p class="reason-text">${escapeHtml(err.message)}</p>
+          </div>
+        `;
+        resultDiv.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Check for Phishing";
+      }
     }
   </script>
 </body>
