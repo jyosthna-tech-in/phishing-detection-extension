@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Phishing Detector</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 0 20px; color: #172033; }
+    textarea, input { width: 100%; padding: 10px; margin: 8px 0 16px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
+    button { background: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    pre { background: #f1f5f9; padding: 14px; border-radius: 8px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h2>AI Phishing Email Detector — Live Demo</h2>
+  <input id="sender" placeholder="Sender (e.g. security@paypa1-alert.com)" />
+  <input id="subject" placeholder="Subject (e.g. Urgent: Verify your account)" />
+  <textarea id="body" rows="5" placeholder="Paste suspicious email text here..."></textarea>
+  <button onclick="testScan()">Analyze Email</button>
+  <pre id="out">Results will appear here...</pre>
+  <script>
+    async function testScan() {
+      const out = document.getElementById('out');
+      out.textContent = 'Analyzing...';
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sender: document.getElementById('sender').value,
+          subject: document.getElementById('subject').value,
+          body: document.getElementById('body').value
+        })
+      });
+      out.textContent = 'HTTP ' + res.status + '\n' + await res.text();
+    }
+  </script>
+</body>
+</html>
