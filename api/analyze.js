@@ -21,7 +21,7 @@ Sender: ${sender}
 Subject: ${subject}
 Body: ${body}`;
 
-    const models = ['gemini-3.8-flash', 'gemini-3.8-flash-lite'];
+    const models = ['gemini-3.8-flash', 'gemini-3.8-flash-lite', 'gemini-3.6-flash'];
     let lastError = 'Unexpected response from Gemini API';
 
     for (const model of models) {
